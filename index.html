@@ -4,16 +4,59 @@
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<script type="module" src="Day4/index.js"></script>
+		<script type="module" src="Day4/indexPartTwo.js"></script>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap"
+			rel="stylesheet"
+		/>
 		<title>Advent of Code</title>
 		<style>
 			body {
+				font-family: "Montserrat", sans-serif;
 				color: white;
 				background-color: black;
+			}
+
+			#number-queue {
+				display: flex;
+				list-style: none;
+				flex-wrap: wrap;
+			}
+
+			#number-queue li {
+				margin: 0 5px;
+			}
+
+			table {
+				margin-bottom: 20px;
+			}
+
+			table,
+			th,
+			td {
+				border: 1px solid white;
+			}
+
+			td {
+				padding: 5px;
+			}
+
+			.bingo-cards {
+				display: grid;
+				grid-template-columns: repeat(5, 1fr);
+				grid-gap: 10px;
+			}
+
+			.true {
+				color: grey;
+				text-shadow: #fc0 1px 0 10px;
 			}
 		</style>
 	</head>
 	<body>
 		<h1>Advent of Code</h1>
+		<main id="app"></main>
 	</body>
 </html>

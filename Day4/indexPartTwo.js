@@ -1,5 +1,5 @@
-//import { data } from './sampleData2.js';
-import { data } from './data.js';
+import { data } from './sampleData.js';
+//import { data } from './data.js';
 // https://adventofcode.com/2021/day/4/input
 
 // Init variables.
@@ -12,6 +12,10 @@ let matchedRow = [];
 let matchedCol = [];
 let drawnNumber = '';
 let winningCard = [];
+const allWinners = [];
+const wIds = [];
+let lastDrawnNumber = '';
+let lastWinningCard = '';
 
 const renderData = (drawnNumbers, bingoCards, drawnNumIndex = undefined) => {
     let drawnNumHTml = `<h2>Bingo Number Queue:</h2><ul id="number-queue">`;
@@ -107,13 +111,24 @@ for (let i = 0; i < drawnNumbers.length; i++) {
                     }
                 }
                 isWinner = rowMarked;
-                // Break if winner found.
-                if (isWinner) break;
+                /*
+@todo - Check if a winner was found.
+If found, check against winner array to see if winning row or column has already been tracked.
+If it hasn't been tracked, then push to the winning array.
+ */
+                if (isWinner) {
+                    const wId = btoa(JSON.stringify(matchedRow));
+                    if (!wIds.includes(wId)) {
+                        allWinners.push(matchedRow);
+                        wIds.push(wId);
+                        lastWinningCard = winningCard;
+                    }
+                    lastDrawnNumber = drawnNumber;
+                }
                 matchedRow = [];
+                rowMarked = true;
+                isWinner = false;
             }
-
-            // Break if winner found.
-            if (isWinner) break;
 
             //Check for matching numbers in column.
             for (let j = 0; j < winningCard.length; j++) {
@@ -127,34 +142,40 @@ for (let i = 0; i < drawnNumbers.length; i++) {
                     }
                 }
                 isWinner = colMarked;
-                // Break if winner found.
-                if (isWinner) break;
+                /*
+           @todo - Check if a winner was found.
+           If found, check against winner array to see if winning row or column has already been tracked.
+           If it hasn't been tracked, then push to the winning array.
+            */
+                if (isWinner) {
+                    const wId = btoa(JSON.stringify(matchedCol));
+                    if (!wIds.includes(wId)) {
+                        allWinners.push(matchedCol);
+                        wIds.push(wId);
+                        lastWinningCard = winningCard;
+                    }
+                    lastDrawnNumber = drawnNumber;
+                }
 
                 matchedCol = [];
                 colMarked = true;
+                isWinner = false;
             }
-
-            // Break if winner found.
-            if (isWinner) break;
         }
     }
-    // Break if winner found.
-    if (isWinner) break;
 }
 
 // Calculate answer for Advent of Code.
-let winningCardSum = 0;
+let lastWinningCardSum = 0;
 
-for (let row of winningCard) {
+for (let row of lastWinningCard) {
     for (let num of row) {
         if (false === Object.values(num)[0]) {
-            winningCardSum += parseInt(Object.keys(num)[0]);
+            lastWinningCardSum += parseInt(Object.keys(num)[0]);
         }
     }
 }
 
 
-console.log(`winning card`, winningCardSum, winningCard);
-console.log(`drawn number`, drawnNumber);
-console.log(`solution`, drawnNumber * winningCardSum);
-// console.log(isWinner, matchedRow, matchedCol);
+console.log(lastDrawnNumber, lastWinningCard, allWinners);
+
