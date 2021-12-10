@@ -1,5 +1,5 @@
-import { data } from './sampleData.js';
-//import { data } from './data.js';
+//import { data } from './sampleData.js';
+import { data } from './data.js';
 // https://adventofcode.com/2021/day/4/input
 
 // Init variables.
@@ -16,6 +16,7 @@ const allWinners = [];
 const wIds = [];
 let lastDrawnNumber = '';
 let lastWinningCard = '';
+let isAllWinners = 0;
 
 const renderData = (drawnNumbers, bingoCards, drawnNumIndex = undefined) => {
     let drawnNumHTml = `<h2>Bingo Number Queue:</h2><ul id="number-queue">`;
@@ -68,6 +69,10 @@ for (let i = 0; i < dataArr.length; i++) {
     }
 }
 
+const bingoCardStatuses = bingoCards.map((card, index) => {
+    return false;
+});
+
 // Debugging.
 //console.log(bingoCards);
 
@@ -75,7 +80,7 @@ for (let i = 0; i < dataArr.length; i++) {
 renderData(drawnNumbers, bingoCards);
 
 // Establish bingo matches while looping through each drawn number.
-//for (let i = 0; i < 1; i++) {
+//for (let i = 0; i < 10; i++) {
 for (let i = 0; i < drawnNumbers.length; i++) {
     drawnNumber = drawnNumbers[i];
     bingoCards = bingoCards.map((card, index) => {
@@ -97,10 +102,9 @@ for (let i = 0; i < drawnNumbers.length; i++) {
 
     // Check for winners after 5th number is drawn.
     if (i > 5) {
-        for (winningCard of bingoCards) {
-
+        for (let c = 0; c < bingoCards.length; c++) {
             // Check for matching numbers in row.
-            for (let row of winningCard) {
+            for (let row of bingoCards[c]) {
                 let rowMarked = true;
                 for (let num of row) {
                     const isMarked = Object.values(num)[0];
@@ -111,17 +115,15 @@ for (let i = 0; i < drawnNumbers.length; i++) {
                     }
                 }
                 isWinner = rowMarked;
-                /*
-@todo - Check if a winner was found.
-If found, check against winner array to see if winning row or column has already been tracked.
-If it hasn't been tracked, then push to the winning array.
- */
+
+                // If matching row found in bingo card.
                 if (isWinner) {
+                    bingoCardStatuses[c] = true;
                     const wId = btoa(JSON.stringify(matchedRow));
                     if (!wIds.includes(wId)) {
                         allWinners.push(matchedRow);
                         wIds.push(wId);
-                        lastWinningCard = winningCard;
+                        lastWinningCard = bingoCards[c];
                     }
                     lastDrawnNumber = drawnNumber;
                 }
@@ -131,9 +133,9 @@ If it hasn't been tracked, then push to the winning array.
             }
 
             //Check for matching numbers in column.
-            for (let j = 0; j < winningCard.length; j++) {
+            for (let j = 0; j < bingoCards[c].length; j++) {
                 let colMarked = true;
-                for (let row of winningCard) {
+                for (let row of bingoCards[c]) {
                     const isMarked = Object.values(row[j])[0];
                     matchedCol.push(Object.keys(row[j])[0]);
                     if (!isMarked) {
@@ -142,17 +144,14 @@ If it hasn't been tracked, then push to the winning array.
                     }
                 }
                 isWinner = colMarked;
-                /*
-           @todo - Check if a winner was found.
-           If found, check against winner array to see if winning row or column has already been tracked.
-           If it hasn't been tracked, then push to the winning array.
-            */
+                // If matching row found in bingo card.
                 if (isWinner) {
+                    bingoCardStatuses[c] = true;
                     const wId = btoa(JSON.stringify(matchedCol));
                     if (!wIds.includes(wId)) {
                         allWinners.push(matchedCol);
                         wIds.push(wId);
-                        lastWinningCard = winningCard;
+                        lastWinningCard = bingoCards[c];
                     }
                     lastDrawnNumber = drawnNumber;
                 }
@@ -161,7 +160,18 @@ If it hasn't been tracked, then push to the winning array.
                 colMarked = true;
                 isWinner = false;
             }
+
+            // Stop when each bingo card has won.
+            isAllWinners = 0;
+            bingoCardStatuses.forEach(element => isAllWinners += element);
+            if (isAllWinners === bingoCards.length) {
+                break;
+            };
         }
+
+        if (isAllWinners === bingoCards.length) {
+            break;
+        };
     }
 }
 
@@ -177,5 +187,6 @@ for (let row of lastWinningCard) {
 }
 
 
-console.log(lastDrawnNumber, lastWinningCard, allWinners);
+console.log(lastWinningCardSum, lastDrawnNumber, lastWinningCard);
+console.log(`Solution: ${lastWinningCardSum * lastDrawnNumber}`)
 
